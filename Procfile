@@ -1,1 +1,1 @@
-web: python app.py --log-file -
+web: python app.py --bind 0.0.0.0:${PORT} --log-file -
