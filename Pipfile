@@ -9,6 +9,7 @@ pylint = "*"
 [packages]
 flask = "*"
 pylint = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.7"

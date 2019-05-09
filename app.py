@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import os
 import datetime
@@ -7,6 +8,7 @@ UPLOAD_FOLDER = './upload'
 
 # Init app 
 app = Flask(__name__, static_folder="upload")
+CORS(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/", methods=['GET'])
