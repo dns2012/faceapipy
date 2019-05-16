@@ -21,10 +21,10 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `user` (`id`, `name`, `username`, `password`, `phone`, `address`, `image`, `sample_image`, `created_at`, `updated_at`) VALUES
-(1,	'Aji',	'aji',	'acception',	89643385968,	'Aji Address',	'aji_sample.jpg',	'aji_sample.jpg',	'2019-05-14 02:48:48',	'2019-05-14 02:48:48'),
-(2,	'Fadil',	'fadil',	'acception',	89643385968,	'Fadil Address',	'fadil_sample.jpg',	'fadil_sample.jpg',	'2019-05-14 02:48:48',	'2019-05-14 02:48:48'),
-(3,	'Viko',	'viko',	'acception',	89643385968,	'Viko Address',	'viko_sample.jpg',	'viko_sample.jpg',	'2019-05-14 02:48:48',	'2019-05-14 02:48:48'),
-(4,	'Yosa',	'yosa',	'acception',	89643385968,	'Yosa Address',	'yosa_sample.jpg',	'yosa_sample.jpg',	'2019-05-14 02:48:48',	'2019-05-14 02:48:48'),
-(5,	'Dani',	'dani',	'acception',	89643385968,	'Dani Address',	'dani_sample.jpg',	'dani_sample_dark.jpg',	'2019-05-14 02:48:48',	'2019-05-14 02:48:48');
+(1,	'Aji',	'aji',	'c14bcebc5b4cd0c7fce90c3806188619',	89643385968,	'Aji Address',	'aji_sample.jpg',	'aji_sample.jpg',	'2019-05-14 02:48:48',	'2019-05-14 02:48:48'),
+(2,	'Fadil',	'fadil',	'c14bcebc5b4cd0c7fce90c3806188619',	89643385968,	'Fadil Address',	'fadil_sample.jpg',	'fadil_sample.jpg',	'2019-05-14 02:48:48',	'2019-05-14 02:48:48'),
+(3,	'Viko',	'viko',	'c14bcebc5b4cd0c7fce90c3806188619',	89643385968,	'Viko Address',	'viko_sample.jpg',	'viko_sample.jpg',	'2019-05-14 02:48:48',	'2019-05-14 02:48:48'),
+(4,	'Yosa',	'yosa',	'c14bcebc5b4cd0c7fce90c3806188619',	89643385968,	'Yosa Address',	'yosa_sample.jpg',	'yosa_sample.jpg',	'2019-05-14 02:48:48',	'2019-05-14 02:48:48'),
+(5,	'Dani',	'dani',	'c14bcebc5b4cd0c7fce90c3806188619',	89643385968,	'Dani Address',	'dani_sample.jpg',	'dani_sample.jpg',	'2019-05-14 02:48:48',	'2019-05-14 02:48:48');
 
--- 2019-05-15 23:54:12
+-- 2019-05-16 00:15:29
