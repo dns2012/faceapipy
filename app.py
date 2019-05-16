@@ -29,9 +29,9 @@ def hello():
     })
 
 
-@app.route("/upload", methods=['POST'])
-def upload():
-    file = request.files['file']
+@app.route("/present", methods=['POST'])
+def present():
+    file = request.files['image']
     filename = secure_filename(datetime.datetime.now().replace(microsecond=0).isoformat() + file.filename)
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     
@@ -42,7 +42,7 @@ def upload():
 
     for data in sql_results:
 
-        sample_picture = face_recognition.load_image_file("./sample_image/" + data["image"])
+        sample_picture = face_recognition.load_image_file("./sample_image/" + data["sample_image"])
         sample_picture_encoding = face_recognition.face_encodings(sample_picture)[0]
         
         unknown_picture = face_recognition.load_image_file("./upload/" + filename)
