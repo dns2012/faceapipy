@@ -9,7 +9,7 @@ import pymysql
 # Database Connection
 database = pymysql.connect(host='localhost',
                              user='root',
-                             password='Php7.0Native',
+                             password='acception',
                              db='faceapps',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
@@ -66,6 +66,18 @@ def present():
     return jsonify({
         "Distance"  : distanced,
         "Profile" : profile
+    })
+
+
+@app.route("/profile/<id>", methods=['GET'])
+def profile(id):
+    with database.cursor() as cursor:
+        sql = "SELECT * FROM user WHERE id=%s" 
+        cursor.execute(sql, (id))
+        sql_results = cursor.fetchone()
+
+    return jsonify({
+        "Profile" : sql_results
     })
 
 
