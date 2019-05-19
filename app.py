@@ -81,6 +81,41 @@ def profile(id):
     })
 
 
+@app.route("/profile/<id>", methods=['PUT'])
+def profileUpdate(id):
+    data = request.json
+    name = data['name']
+    username = data['username']
+    phone = data['phone']
+    address = data['address']
+    updated_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+
+    with database.cursor() as cursor:
+        sql = "UPDATE user SET name=%s, username=%s, phone=%s, address=%s, updated_at=%s WHERE id=%s" 
+        cursor.execute(sql, (name, username, phone, address, updated_at, id))
+        database.commit()
+
+    return jsonify({
+        "message" : "success"
+    })
+
+@app.route("/profile/photo/<id>", methods=['PUT'])
+def profileUpdatePhoto(id):
+    file = request.files['image']
+    filename = secure_filename(datetime.datetime.now().replace(microsecond=0).isoformat() + file.filename)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    updated_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+
+    with database.cursor() as cursor:
+        sql = "UPDATE user SET image=%s, updated_at=%s WHERE id=%s" 
+        cursor.execute(sql, (filename, updated_at, id))
+        database.commit()
+
+    return jsonify({
+        "message" : "completed"
+    })
+
+
 
 # Run Server
 if __name__ == '__main__':
