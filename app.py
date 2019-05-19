@@ -9,7 +9,7 @@ import pymysql
 # Database Connection
 database = pymysql.connect(host='localhost',
                              user='root',
-                             password='Php7.0Native',
+                             password='acception',
                              db='faceapps',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
@@ -65,6 +65,7 @@ def present():
 
     return jsonify({
         "Distance"  : distanced,
+        "Image" : filename,
         "Profile" : profile
     })
 
@@ -85,14 +86,15 @@ def profile(id):
 def profileUpdate(id):
     data = request.json
     name = data['name']
+    email = data['email']
     username = data['username']
     phone = data['phone']
     address = data['address']
     updated_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
 
     with database.cursor() as cursor:
-        sql = "UPDATE user SET name=%s, username=%s, phone=%s, address=%s, updated_at=%s WHERE id=%s" 
-        cursor.execute(sql, (name, username, phone, address, updated_at, id))
+        sql = "UPDATE user SET name=%s, email=%s, username=%s, phone=%s, address=%s, updated_at=%s WHERE id=%s" 
+        cursor.execute(sql, (name, email, username, phone, address, updated_at, id))
         database.commit()
 
     return jsonify({
@@ -115,6 +117,42 @@ def profileUpdatePhoto(id):
         "message" : "completed"
     })
 
+
+@app.route("/profile/status/<id>", methods=['PUT'])
+def profileUpdateStatus(id):
+    data = request.json
+    status = data['status']
+    updated_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+
+    with database.cursor() as cursor:
+        sql = "UPDATE user SET status=%s, updated_at=%s WHERE id=%s" 
+        cursor.execute(sql, (status, updated_at, id))
+        database.commit()
+
+    return jsonify({
+        "message" : "completed"
+    })
+
+
+@app.route("/present/add", methods=['POST'])
+def presentAdd():
+    data = request.json
+    userId = data['userId']
+    image = data['image']
+    similiar = data['similiar']
+    latitude = data['latitude']
+    longitude = data['longitude']
+    created_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+    updated_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+
+    with database.cursor() as cursor:
+        sql = "INSERT INTO present (user_id, image, similiar, latitude, longitude, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s)" 
+        cursor.execute(sql, (userId, image, similiar, latitude, longitude, created_at, updated_at))
+        database.commit()
+
+    return jsonify({
+        "message" : "completed"
+    })
 
 
 # Run Server
