@@ -19,7 +19,9 @@ CREATE TABLE `present` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `present` (`id`, `user_id`, `image`, `similiar`, `latitude`, `longitude`, `created_at`, `updated_at`) VALUES
-(1,	5,	'test.jpg',	62,	'52352,523423',	'5235252423',	'2019-05-19 20:50:42',	'2019-05-19 20:50:42');
+(1,	5,	'test.jpg',	62,	'52352,523423',	'5235252423',	'2019-05-19 20:50:42',	'2019-05-19 20:50:42'),
+(2,	5,	'test.jpg',	62,	'52352,523423',	'5235252423',	'2019-05-19 21:06:17',	'2019-05-19 21:06:17'),
+(3,	6,	'test.jpg',	62,	'52352,523423',	'5235252423',	'2019-05-19 21:06:17',	'2019-05-19 21:06:17');
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
@@ -39,6 +41,7 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `user` (`id`, `name`, `email`, `username`, `password`, `phone`, `address`, `image`, `sample_image`, `status`, `created_at`, `updated_at`) VALUES
-(5,	'Dani S',	'dani@canisnfelis.com',	'dnsprogress',	'c14bcebc5b4cd0c7fce90c3806188619',	6289643385968,	'Jalan Nangka RT 2 RW 3 Pohsangit Kidul Kecamatan Kademangan Probolinggo',	'2019-05-19T102523user-default.png',	'dani_sample.jpg',	'0',	'2019-05-14 02:48:48',	'2019-05-19 18:02:20');
+(5,	'Dani S',	'dani@canisnfelis.com',	'dnsprogress',	'c14bcebc5b4cd0c7fce90c3806188619',	6289643385968,	'Jalan Nangka RT 2 RW 3 Pohsangit Kidul Kecamatan Kademangan Probolinggo',	'2019-05-19T102523user-default.png',	'dani_sample.jpg',	'0',	'2019-05-14 02:48:48',	'2019-05-19 18:02:20'),
+(6,	'Fadil',	'fadil@canisnfelis.com',	'fadilatur',	'c14bcebc5b4cd0c7fce90c3806188619',	6289643385968,	'Gang Pengoncen Kecapan',	'2019-05-19T102523user-default.png',	'fadil_sample.jpg',	'0',	'2019-05-14 02:48:48',	'2019-05-19 18:02:20');
 
--- 2019-05-19 13:55:58
+-- 2019-05-19 14:22:48
