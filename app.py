@@ -96,7 +96,7 @@ def profileUpdate(id):
         database.commit()
 
     return jsonify({
-        "message" : "success"
+        "message" : "completed"
     })
 
 @app.route("/profile/photo/<id>", methods=['PUT'])
