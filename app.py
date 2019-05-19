@@ -18,7 +18,7 @@ database = pymysql.connect(host='localhost',
 UPLOAD_FOLDER = './upload'
 
 # Init App 
-app = Flask(__name__, static_folder="sample_image")
+app = Flask(__name__, static_folder="upload")
 CORS(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
