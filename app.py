@@ -18,7 +18,7 @@ database = pymysql.connect(host='localhost',
 UPLOAD_FOLDER = './upload'
 
 # Init App 
-app = Flask(__name__, static_folder="upload")
+app = Flask(__name__, static_folder="sample_image")
 CORS(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -48,7 +48,7 @@ def present():
         unknown_picture = face_recognition.load_image_file("./upload/" + filename)
         unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
 
-        results = face_recognition.compare_faces([sample_picture_encoding], unknown_face_encoding, 0.4)
+        results = face_recognition.compare_faces([sample_picture_encoding], unknown_face_encoding, 0.45)
         distance = face_recognition.face_distance([sample_picture_encoding], unknown_face_encoding)
         
         print(results)
