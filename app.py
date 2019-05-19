@@ -155,6 +155,41 @@ def presentAdd():
         "message" : "completed"
     })
 
+@app.route("/present/user/<id>", methods=['GET'])
+def presentByUser(id):
+    with database.cursor() as cursor:
+        sql = "SELECT * FROM present WHERE user_id=%s" 
+        cursor.execute(sql, (id))
+        sql_results = cursor.fetchall()
+
+    return jsonify({
+        "Present" : sql_results
+    })
+
+
+@app.route("/present/<id>", methods=['GET'])
+def presentById(id):
+    with database.cursor() as cursor:
+        sql = "SELECT user.name, user.image as userimage, present.* FROM present INNER JOIN user ON user.id = present.user_id WHERE present.id=%s" 
+        cursor.execute(sql, (id))
+        sql_results = cursor.fetchall()
+
+    return jsonify({
+        "Present" : sql_results
+    })
+
+
+@app.route("/present/friends/<id>", methods=['GET'])
+def presentFriends(id):
+    with database.cursor() as cursor:
+        sql = "SELECT user.name, user.image as userimage, present.* FROM present INNER JOIN user ON user.id = present.user_id WHERE present.user_id!=%s" 
+        cursor.execute(sql, (id))
+        sql_results = cursor.fetchall()
+
+    return jsonify({
+        "Present" : sql_results
+    })
+
 
 # Run Server
 if __name__ == '__main__':
