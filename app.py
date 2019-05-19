@@ -112,7 +112,8 @@ def profileUpdatePhoto(id):
         database.commit()
 
     return jsonify({
-        "message" : "completed"
+        "message" : "completed",
+	"image" : filename
     })
 
 
