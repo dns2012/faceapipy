@@ -115,7 +115,7 @@ def profileUpdatePhoto(id):
 
     return jsonify({
         "message" : "completed",
-	"image" : filename
+	    "image" : filename
     })
 
 
@@ -152,7 +152,7 @@ def presentAdd():
         database.commit()
 
     with database.cursor() as cursor:
-	sql = "UPDATE user SET status='1', updated_at=%s WHERE id=%s" 
+	sql = "UPDATE user SET status='1', updated_at=%s WHERE id=%s"
         cursor.execute(sql, (updated_at, userId))
         database.commit()
 

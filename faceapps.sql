@@ -18,10 +18,6 @@ CREATE TABLE `present` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `present` (`id`, `user_id`, `image`, `similiar`, `latitude`, `longitude`, `created_at`, `updated_at`) VALUES
-(1,	5,	'test.jpg',	62,	'52352,523423',	'5235252423',	'2019-05-19 20:50:42',	'2019-05-19 20:50:42'),
-(2,	5,	'test.jpg',	62,	'52352,523423',	'5235252423',	'2019-05-19 21:06:17',	'2019-05-19 21:06:17'),
-(3,	6,	'test.jpg',	62,	'52352,523423',	'5235252423',	'2019-05-19 21:06:17',	'2019-05-19 21:06:17');
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
@@ -41,7 +37,8 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `user` (`id`, `name`, `email`, `username`, `password`, `phone`, `address`, `image`, `sample_image`, `status`, `created_at`, `updated_at`) VALUES
-(5,	'Dani S',	'dani@canisnfelis.com',	'dnsprogress',	'c14bcebc5b4cd0c7fce90c3806188619',	6289643385968,	'Jalan Nangka RT 2 RW 3 Pohsangit Kidul Kecamatan Kademangan Probolinggo',	'2019-05-19T102523user-default.png',	'dani_sample.jpg',	'0',	'2019-05-14 02:48:48',	'2019-05-19 18:02:20'),
-(6,	'Fadil',	'fadil@canisnfelis.com',	'fadilatur',	'c14bcebc5b4cd0c7fce90c3806188619',	6289643385968,	'Gang Pengoncen Kecapan',	'2019-05-19T102523user-default.png',	'fadil_sample.jpg',	'0',	'2019-05-14 02:48:48',	'2019-05-19 18:02:20');
+(5,	'USER 1',	'user1@faceapps.com',	'user1',	'24c9e15e52afc47c225b757e7bee1f9d',	6281001110001,	'USER 1 ADDRESS',	'default-user.png',	'user1_sample.jpg',	'0',	'2019-05-21 02:48:48',	'2019-05-21 18:02:20'),
+(7,	'USER 2',	'user2@faceapps.com',	'user2',	'7e58d63b60197ceb55a1c487989a3720',	6281001110001,	'USER 2 ADDRESS',	'default-user.png',	'user2_sample.jpg',	'0',	'2019-05-21 02:48:48',	'2019-05-21 18:02:20'),
+(8,	'USER 3',	'user3@faceapps.com',	'user3',	'92877af70a45fd6a2ed7fe81e1236b78',	6281001110001,	'USER 3 ADDRESS',	'default-user.png',	'user3_sample.jpg',	'0',	'2019-05-21 02:48:48',	'2019-05-21 18:02:20');
 
--- 2019-05-19 14:22:48
+-- 2019-05-21 01:35:03
