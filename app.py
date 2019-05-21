@@ -151,6 +151,11 @@ def presentAdd():
         cursor.execute(sql, (userId, image, similiar, latitude, longitude, created_at, updated_at))
         database.commit()
 
+    with database.cursor() as cursor:
+	sql = "UPDATE user SET status='1', updated_at=%s WHERE id=%s" 
+        cursor.execute(sql, (updated_at, userId))
+        database.commit()
+
     return jsonify({
         "message" : "completed"
     })
@@ -158,7 +163,7 @@ def presentAdd():
 @app.route("/present/user/<id>", methods=['GET'])
 def presentByUser(id):
     with database.cursor() as cursor:
-        sql = "SELECT * FROM present WHERE user_id=%s" 
+        sql = "SELECT * FROM present WHERE user_id=%s ORDER BY created_at DESC" 
         cursor.execute(sql, (id))
         sql_results = cursor.fetchall()
 
@@ -172,7 +177,7 @@ def presentById(id):
     with database.cursor() as cursor:
         sql = "SELECT user.name, user.image as userimage, present.* FROM present INNER JOIN user ON user.id = present.user_id WHERE present.id=%s" 
         cursor.execute(sql, (id))
-        sql_results = cursor.fetchall()
+        sql_results = cursor.fetchone()
 
     return jsonify({
         "Present" : sql_results
@@ -182,7 +187,7 @@ def presentById(id):
 @app.route("/present/friends/<id>", methods=['GET'])
 def presentFriends(id):
     with database.cursor() as cursor:
-        sql = "SELECT user.name, user.image as userimage, present.* FROM present INNER JOIN user ON user.id = present.user_id WHERE present.user_id!=%s" 
+        sql = "SELECT user.name, user.image as userimage, present.* FROM present INNER JOIN user ON user.id = present.user_id WHERE present.user_id!=%s ORDER BY present.created_at DESC" 
         cursor.execute(sql, (id))
         sql_results = cursor.fetchall()
 
