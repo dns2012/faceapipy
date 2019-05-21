@@ -9,7 +9,7 @@ import pymysql
 # Database Connection
 database = pymysql.connect(host='localhost',
                              user='root',
-                             password='Php7.0Native',
+                             password='acception',
                              db='faceapps',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
