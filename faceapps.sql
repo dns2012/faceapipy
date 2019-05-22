@@ -39,6 +39,7 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id`, `name`, `email`, `username`, `password`, `phone`, `address`, `image`, `sample_image`, `status`, `created_at`, `updated_at`) VALUES
 (5,	'USER 1',	'user1@faceapps.com',	'user1',	'24c9e15e52afc47c225b757e7bee1f9d',	6281001110001,	'USER 1 ADDRESS',	'default-user.png',	'user1_sample.jpg',	'0',	'2019-05-21 02:48:48',	'2019-05-21 18:02:20'),
 (7,	'USER 2',	'user2@faceapps.com',	'user2',	'7e58d63b60197ceb55a1c487989a3720',	6281001110001,	'USER 2 ADDRESS',	'default-user.png',	'user2_sample.jpg',	'0',	'2019-05-21 02:48:48',	'2019-05-21 18:02:20'),
-(8,	'USER 3',	'user3@faceapps.com',	'user3',	'92877af70a45fd6a2ed7fe81e1236b78',	6281001110001,	'USER 3 ADDRESS',	'default-user.png',	'user3_sample.jpg',	'0',	'2019-05-21 02:48:48',	'2019-05-21 18:02:20');
+(8,	'USER 3',	'user3@faceapps.com',	'user3',	'92877af70a45fd6a2ed7fe81e1236b78',	6281001110001,	'USER 3 ADDRESS',	'default-user.png',	'user3_sample.jpg',	'0',	'2019-05-21 02:48:48',	'2019-05-21 18:02:20'),
+(9,	'USER 4',	'user4@faceapps.com',	'user4',	'3f02ebe3d7929b091e3d8ccfde2f3bc6',	6281001110001,	'USER 4 ADDRESS',	'default-user.png',	'user4_sample.jpg',	'0',	'2019-05-21 02:48:48',	'2019-05-21 18:02:20');
 
--- 2019-05-21 01:35:03
+-- 2019-05-22 01:36:26
