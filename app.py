@@ -5,6 +5,7 @@ import os
 import datetime
 import face_recognition
 import pymysql
+import shutil
 
 # Database Connection
 database = pymysql.connect(host='localhost',
@@ -16,11 +17,13 @@ database = pymysql.connect(host='localhost',
 
 # Upload Directory
 UPLOAD_FOLDER = './upload'
+UPLOAD_FOLDER_SAMPLE = './sample_image'
 
 # Init App 
 app = Flask(__name__, static_folder="upload")
 CORS(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER_SAMPLE'] = UPLOAD_FOLDER_SAMPLE
 
 @app.route("/", methods=['GET'])
 def hello():
@@ -28,7 +31,30 @@ def hello():
         "message"   : "tested on server free tier"
     })
 
+# Image endpoint
+@app.route("/image/verify", methods=['POST'])
+def imageVerify():
+    file = request.files['image']
+    filename = secure_filename(datetime.datetime.now().replace(microsecond=0).isoformat() + file.filename)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER_SAMPLE'], filename))
+    shutil.copy("./sample_image/" + filename, "./upload/" + filename)
 
+    unknown_picture = face_recognition.load_image_file("./sample_image/" + filename)
+    unknown_face_encoding = face_recognition.face_encodings(unknown_picture)
+    if(len(unknown_face_encoding) > 0):
+        status = 1
+        image = filename
+    else:
+        status = 0
+        image = ""
+
+    return jsonify({
+        "status" : status,
+        "image" : image
+    })
+
+
+# Present endpoint
 @app.route("/present", methods=['POST'])
 def present():
     file = request.files['image']
@@ -67,6 +93,164 @@ def present():
         "Distance"  : distanced,
         "Image" : filename,
         "Profile" : profile
+    })
+
+
+@app.route("/present/<id>", methods=['POST'])
+def presentId(id):
+    file = request.files['image']
+    filename = secure_filename(datetime.datetime.now().replace(microsecond=0).isoformat() + file.filename)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    
+    with database.cursor() as cursor:
+        sql = "SELECT * FROM user WHERE id=%s" 
+        cursor.execute(sql, (id))
+        data = cursor.fetchone()
+
+    sample_picture = face_recognition.load_image_file("./sample_image/" + data["sample_image"])
+    sample_picture_encoding = face_recognition.face_encodings(sample_picture)[0]
+    
+    unknown_picture = face_recognition.load_image_file("./upload/" + filename)
+    unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
+
+    results = face_recognition.compare_faces([sample_picture_encoding], unknown_face_encoding, 0.45)
+    distance = face_recognition.face_distance([sample_picture_encoding], unknown_face_encoding)
+    
+    print(results)
+    print(distance)
+
+    if True in results:
+        will_distanced = 1 - distance[0]
+        distanced = int(will_distanced * 100)
+        profile = data
+    else: 
+        distanced = 0
+        profile = ""
+
+    return jsonify({
+        "Distance"  : distanced,
+        "Image" : filename,
+        "Profile" : profile
+    })
+
+
+@app.route("/present/add", methods=['POST'])
+def presentAdd():
+    data = request.json
+    userId = data['userId']
+    image = data['image']
+    similiar = data['similiar']
+    latitude = data['latitude']
+    longitude = data['longitude']
+    created_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+    updated_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+
+    with database.cursor() as cursor:
+        sql = "INSERT INTO present (user_id, image, similiar, latitude, longitude, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s)" 
+        cursor.execute(sql, (userId, image, similiar, latitude, longitude, created_at, updated_at))
+        database.commit()
+
+    with database.cursor() as cursor:
+        sql = "UPDATE user SET status='1', updated_at=%s WHERE id=%s"
+        cursor.execute(sql, (updated_at, userId))
+        database.commit()
+
+    return jsonify({
+        "message" : "completed"
+    })
+
+
+@app.route("/present/user/<id>", methods=['GET'])
+def presentByUser(id):
+    with database.cursor() as cursor:
+        sql = "SELECT * FROM present WHERE user_id=%s ORDER BY created_at DESC" 
+        cursor.execute(sql, (id))
+        sql_results = cursor.fetchall()
+
+    return jsonify({
+        "Present" : sql_results
+    })
+
+
+@app.route("/present/<id>", methods=['GET'])
+def presentById(id):
+    with database.cursor() as cursor:
+        sql = "SELECT user.name, user.image as userimage, present.* FROM present INNER JOIN user ON user.id = present.user_id WHERE present.id=%s" 
+        cursor.execute(sql, (id))
+        sql_results = cursor.fetchone()
+
+    return jsonify({
+        "Present" : sql_results
+    })
+
+
+@app.route("/present/friends/<id>", methods=['GET'])
+def presentFriends(id):
+    with database.cursor() as cursor:
+        sql = "SELECT user.name, user.image as userimage, present.* FROM present INNER JOIN user ON user.id = present.user_id WHERE present.user_id!=%s ORDER BY present.created_at DESC" 
+        cursor.execute(sql, (id))
+        sql_results = cursor.fetchall()
+
+    return jsonify({
+        "Present" : sql_results
+    })
+
+
+# Profile endpoint
+@app.route("/profile", methods=['POST'])
+def profileAdd():
+    data = request.json
+    id = 0
+    name = data['name']
+    email = data['email']
+    username = data['username']
+    password = data['password']
+    phone = data['phone']
+    address = data['address']
+    image = data['image']
+    status = "0"
+    created_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+    updated_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+
+    with database.cursor() as cursor:
+        sql = "SELECT * FROM user WHERE username=%s OR email=%s" 
+        cursor.execute(sql, (username, email))
+        check_user = cursor.fetchone()
+    
+    if(check_user):
+        message = "registered"
+    else:
+        with database.cursor() as cursor:
+            sql = "INSERT INTO user VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" 
+            cursor.execute(sql, (id, name, email, username, password, phone, address, image, image, status, created_at, updated_at))
+            database.commit()
+        message = "completed"
+
+    return jsonify({
+        "message" : message
+    })
+
+
+@app.route("/profile/username", methods=['POST'])
+def profileUsername():
+    data = request.json
+    username = data['username']
+
+    with database.cursor() as cursor:
+        sql = "SELECT * FROM user WHERE username=%s" 
+        cursor.execute(sql, (username))
+        sql_results = cursor.fetchone()
+    
+    if(sql_results):
+        message = "registered"
+        profile = sql_results
+    else:
+        message = "unregistered"
+        profile = ""
+
+    return jsonify({
+        "message" : message,
+        "profile" : profile
     })
 
 
@@ -132,67 +316,6 @@ def profileUpdateStatus(id):
 
     return jsonify({
         "message" : "completed"
-    })
-
-
-@app.route("/present/add", methods=['POST'])
-def presentAdd():
-    data = request.json
-    userId = data['userId']
-    image = data['image']
-    similiar = data['similiar']
-    latitude = data['latitude']
-    longitude = data['longitude']
-    created_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-    updated_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-
-    with database.cursor() as cursor:
-        sql = "INSERT INTO present (user_id, image, similiar, latitude, longitude, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s)" 
-        cursor.execute(sql, (userId, image, similiar, latitude, longitude, created_at, updated_at))
-        database.commit()
-
-    with database.cursor() as cursor:
-	sql = "UPDATE user SET status='1', updated_at=%s WHERE id=%s"
-        cursor.execute(sql, (updated_at, userId))
-        database.commit()
-
-    return jsonify({
-        "message" : "completed"
-    })
-
-@app.route("/present/user/<id>", methods=['GET'])
-def presentByUser(id):
-    with database.cursor() as cursor:
-        sql = "SELECT * FROM present WHERE user_id=%s ORDER BY created_at DESC" 
-        cursor.execute(sql, (id))
-        sql_results = cursor.fetchall()
-
-    return jsonify({
-        "Present" : sql_results
-    })
-
-
-@app.route("/present/<id>", methods=['GET'])
-def presentById(id):
-    with database.cursor() as cursor:
-        sql = "SELECT user.name, user.image as userimage, present.* FROM present INNER JOIN user ON user.id = present.user_id WHERE present.id=%s" 
-        cursor.execute(sql, (id))
-        sql_results = cursor.fetchone()
-
-    return jsonify({
-        "Present" : sql_results
-    })
-
-
-@app.route("/present/friends/<id>", methods=['GET'])
-def presentFriends(id):
-    with database.cursor() as cursor:
-        sql = "SELECT user.name, user.image as userimage, present.* FROM present INNER JOIN user ON user.id = present.user_id WHERE present.user_id!=%s ORDER BY present.created_at DESC" 
-        cursor.execute(sql, (id))
-        sql_results = cursor.fetchall()
-
-    return jsonify({
-        "Present" : sql_results
     })
 
 
