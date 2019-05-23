@@ -10,7 +10,7 @@ import shutil
 # Database Connection
 database = pymysql.connect(host='localhost',
                              user='root',
-                             password='acception',
+                             password='Php7.0Native',
                              db='faceapps',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
