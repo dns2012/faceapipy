@@ -6,11 +6,12 @@ import datetime
 import face_recognition
 import pymysql
 import shutil
+from PIL import Image
 
 # Database Connection
 database = pymysql.connect(host='localhost',
                              user='root',
-                             password='Php7.0Native',
+                             password='acception',
                              db='faceapps',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
@@ -32,11 +33,31 @@ def hello():
     })
 
 # Image endpoint
+@app.route("/image/resize", methods=['POST'])
+def imageResize():
+    file = request.files['image']
+    filename = secure_filename(datetime.datetime.now().replace(microsecond=0).isoformat() + file.filename)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER_SAMPLE'], filename))
+
+    image = Image.open("./sample_image/" + filename)
+    # newImage = image.resize((300, 400))
+    image.save(os.path.join(app.config['UPLOAD_FOLDER_SAMPLE'], filename), optimize=True, quality=50)
+
+    return jsonify({
+        "message" : "oke"
+    })
+
+
 @app.route("/image/verify", methods=['POST'])
 def imageVerify():
     file = request.files['image']
     filename = secure_filename(datetime.datetime.now().replace(microsecond=0).isoformat() + file.filename)
     file.save(os.path.join(app.config['UPLOAD_FOLDER_SAMPLE'], filename))
+
+    uploadedImage = Image.open("./sample_image/" + filename)
+    # resizedImage = uploadedImage.resize((300,400))
+    uploadedImage.save(os.path.join(app.config['UPLOAD_FOLDER_SAMPLE'], filename))
+
     shutil.copy("./sample_image/" + filename, "./upload/" + filename)
 
     unknown_picture = face_recognition.load_image_file("./sample_image/" + filename)
