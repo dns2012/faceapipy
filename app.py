@@ -81,6 +81,10 @@ def present():
     file = request.files['image']
     filename = secure_filename(datetime.datetime.now().replace(microsecond=0).isoformat() + file.filename)
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+    uploadedImage = Image.open("./upload/" + filename)
+    # resizedImage = uploadedImage.resize((300,400))
+    uploadedImage.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     
     with database.cursor() as cursor:
         sql = "SELECT * FROM user" 
