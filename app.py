@@ -6,22 +6,22 @@ import datetime
 import face_recognition
 import pymysql
 import shutil
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 # Database Connection
 database = pymysql.connect(host='localhost',
                              user='root',
-                             password='Php7.0Native',
+                             password='acception',
                              db='faceapps',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
 
 # Upload Directory
-UPLOAD_FOLDER = './upload'
-UPLOAD_FOLDER_SAMPLE = './sample_image'
+UPLOAD_FOLDER = './static/upload'
+UPLOAD_FOLDER_SAMPLE = './static/sample_image'
 
 # Init App 
-app = Flask(__name__, static_folder="upload")
+app = Flask(__name__, static_folder="static")
 CORS(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['UPLOAD_FOLDER_SAMPLE'] = UPLOAD_FOLDER_SAMPLE
@@ -33,13 +33,32 @@ def hello():
     })
 
 # Image endpoint
+@app.route("/image/show", methods=['GET'])
+def imageShow():
+    unknown_image = face_recognition.load_image_file("./static/sample_image/fadil.jpg")
+    face_locations = face_recognition.face_locations(unknown_image)
+    name = "Fadilatur"
+    font = ImageFont.truetype("tahomscb.ttf", 120)
+    pil_image = Image.fromarray(unknown_image)
+    draw = ImageDraw.Draw(pil_image)
+    (top, right, bottom, left)  =   face_locations[0]
+    draw.rectangle(((left, top), (right, bottom)), outline=(0, 0, 255), width=10)
+    draw.text((left + 6, bottom - 11 - 5), name, fill=(255, 255, 255, 255), font=font)
+    del draw
+    pil_image.save("image_with_boxes.jpg")
+
+    return jsonify({
+        "message"   :  "oke"
+    })
+
+
 @app.route("/image/resize", methods=['POST'])
 def imageResize():
     file = request.files['image']
     filename = secure_filename(datetime.datetime.now().replace(microsecond=0).isoformat() + file.filename)
     file.save(os.path.join(app.config['UPLOAD_FOLDER_SAMPLE'], filename))
 
-    image = Image.open("./sample_image/" + filename)
+    image = Image.open("./static/sample_image/" + filename)
     # newImage = image.resize((300, 400))
     image.save(os.path.join(app.config['UPLOAD_FOLDER_SAMPLE'], filename), optimize=True, quality=50)
 
@@ -54,13 +73,13 @@ def imageVerify():
     filename = secure_filename(datetime.datetime.now().replace(microsecond=0).isoformat() + file.filename)
     file.save(os.path.join(app.config['UPLOAD_FOLDER_SAMPLE'], filename))
 
-    uploadedImage = Image.open("./sample_image/" + filename)
+    uploadedImage = Image.open("./static/sample_image/" + filename)
     # resizedImage = uploadedImage.resize((300,400))
     uploadedImage.save(os.path.join(app.config['UPLOAD_FOLDER_SAMPLE'], filename))
 
-    shutil.copy("./sample_image/" + filename, "./upload/" + filename)
+    shutil.copy("./static/sample_image/" + filename, "./static/upload/" + filename)
 
-    unknown_picture = face_recognition.load_image_file("./sample_image/" + filename)
+    unknown_picture = face_recognition.load_image_file("./static/sample_image/" + filename)
     unknown_face_encoding = face_recognition.face_encodings(unknown_picture)
     if(len(unknown_face_encoding) > 0):
         status = 1
@@ -82,7 +101,7 @@ def present():
     filename = secure_filename(datetime.datetime.now().replace(microsecond=0).isoformat() + file.filename)
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-    uploadedImage = Image.open("./upload/" + filename)
+    uploadedImage = Image.open("./static/upload/" + filename)
     # resizedImage = uploadedImage.resize((300,400))
     uploadedImage.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     
@@ -93,10 +112,10 @@ def present():
 
     for data in sql_results:
 
-        sample_picture = face_recognition.load_image_file("./sample_image/" + data["sample_image"])
+        sample_picture = face_recognition.load_image_file("./static/sample_image/" + data["sample_image"])
         sample_picture_encoding = face_recognition.face_encodings(sample_picture)[0]
         
-        unknown_picture = face_recognition.load_image_file("./upload/" + filename)
+        unknown_picture = face_recognition.load_image_file("./static/upload/" + filename)
         unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
 
         results = face_recognition.compare_faces([sample_picture_encoding], unknown_face_encoding, 0.45)
@@ -127,7 +146,7 @@ def presentId(id):
     filename = secure_filename(datetime.datetime.now().replace(microsecond=0).isoformat() + file.filename)
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-    uploadedImage = Image.open("./upload/" + filename)
+    uploadedImage = Image.open("./static/upload/" + filename)
     # resizedImage = uploadedImage.resize((300,400))
     uploadedImage.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     
@@ -136,10 +155,10 @@ def presentId(id):
         cursor.execute(sql, (id))
         data = cursor.fetchone()
 
-    sample_picture = face_recognition.load_image_file("./sample_image/" + data["sample_image"])
+    sample_picture = face_recognition.load_image_file("./static/sample_image/" + data["sample_image"])
     sample_picture_encoding = face_recognition.face_encodings(sample_picture)[0]
     
-    unknown_picture = face_recognition.load_image_file("./upload/" + filename)
+    unknown_picture = face_recognition.load_image_file("./static/upload/" + filename)
     unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
 
     results = face_recognition.compare_faces([sample_picture_encoding], unknown_face_encoding, 0.45)
