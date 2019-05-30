@@ -19,12 +19,14 @@ database = pymysql.connect(host='localhost',
 # Upload Directory
 UPLOAD_FOLDER = './static/upload'
 UPLOAD_FOLDER_SAMPLE = './static/sample_image'
+UPLOAD_FOLDER_SHOW = './static/show'
 
 # Init App 
 app = Flask(__name__, static_folder="static")
 CORS(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['UPLOAD_FOLDER_SAMPLE'] = UPLOAD_FOLDER_SAMPLE
+app.config['UPLOAD_FOLDER_SHOW'] = UPLOAD_FOLDER_SHOW
 
 @app.route("/", methods=['GET'])
 def hello():
@@ -33,11 +35,15 @@ def hello():
     })
 
 # Image endpoint
-@app.route("/image/show", methods=['GET'])
-def imageShow():
-    unknown_image = face_recognition.load_image_file("./static/sample_image/fadil.jpg")
+@app.route("/image/show/<id>", methods=['GET'])
+def imageShow(id):
+    with database.cursor() as cursor:
+        sql = "SELECT user.name, present.* FROM present INNER JOIN user ON user.id = present.user_id WHERE present.id=%s" 
+        cursor.execute(sql, (id))
+        sql_results = cursor.fetchone()   
+    unknown_image = face_recognition.load_image_file("./static/upload/" + sql_results['image'])
     face_locations = face_recognition.face_locations(unknown_image)
-    name = "Fadilatur"
+    name = sql_results['name']
     font = ImageFont.truetype("tahomscb.ttf", 120)
     pil_image = Image.fromarray(unknown_image)
     draw = ImageDraw.Draw(pil_image)
@@ -45,10 +51,11 @@ def imageShow():
     draw.rectangle(((left, top), (right, bottom)), outline=(0, 0, 255), width=10)
     draw.text((left + 6, bottom - 11 - 5), name, fill=(255, 255, 255, 255), font=font)
     del draw
-    pil_image.save("image_with_boxes.jpg")
+    pil_image.save(os.path.join(app.config['UPLOAD_FOLDER_SHOW'], sql_results['image']))
 
     return jsonify({
-        "message"   :  "oke"
+        "message"   :  "oke",
+        "image"     :   sql_results['image']
     })
 
 
