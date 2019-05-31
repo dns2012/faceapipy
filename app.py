@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont
 # Database Connection
 database = pymysql.connect(host='localhost',
                              user='root',
-                             password='Php7.0Native',
+                             password='acception',
                              db='faceapps',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
@@ -363,6 +363,18 @@ def profileUpdateStatus(id):
     data = request.json
     status = data['status']
     updated_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+
+    if status == "0":
+        with database.cursor() as cursor:
+            sql = "SELECT * FROM present WHERE user_id=%s ORDER BY id DESC LIMIT 1"
+            cursor.execute(sql, (id))
+            sql_results = cursor.fetchone()
+
+        with database.cursor() as cursor:
+            sql = "UPDATE present SET updated_at=%s WHERE id=%s" 
+            cursor.execute(sql, (updated_at, sql_results['id']))
+            database.commit()
+        
 
     with database.cursor() as cursor:
         sql = "UPDATE user SET status=%s, updated_at=%s WHERE id=%s" 
