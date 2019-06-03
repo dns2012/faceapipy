@@ -386,6 +386,22 @@ def profileUpdateStatus(id):
     })
 
 
+@app.route("/profile/password/<id>", methods=['PUT'])
+def profileUpdatePassword(id):
+    data = request.json
+    password = data['password']
+    updated_at = datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        
+    with database.cursor() as cursor:
+        sql = "UPDATE user SET password=%s, updated_at=%s WHERE id=%s" 
+        cursor.execute(sql, (password, updated_at, id))
+        database.commit()
+
+    return jsonify({
+        "message" : "completed"
+    })
+
+
 # Run Server
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 3000))
