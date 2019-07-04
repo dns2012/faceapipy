@@ -168,7 +168,7 @@ def presentId(id):
     unknown_picture = face_recognition.load_image_file("./static/upload/" + filename)
     unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
 
-    results = face_recognition.compare_faces([sample_picture_encoding], unknown_face_encoding, 0.45)
+    results = face_recognition.compare_faces([sample_picture_encoding], unknown_face_encoding, 0.4)
     distance = face_recognition.face_distance([sample_picture_encoding], unknown_face_encoding)
     
     print(results)
