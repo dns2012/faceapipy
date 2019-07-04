@@ -11,7 +11,7 @@ from PIL import Image, ImageDraw, ImageFont
 # Database Connection
 database = pymysql.connect(host='localhost',
                              user='root',
-                             password='Php7.0Native',
+                             password='acception',
                              db='faceapps',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
@@ -88,9 +88,14 @@ def imageVerify():
 
     unknown_picture = face_recognition.load_image_file("./static/sample_image/" + filename)
     unknown_face_encoding = face_recognition.face_encodings(unknown_picture)
+    
     if(len(unknown_face_encoding) > 0):
-        status = 1
-        image = filename
+        if(len(unknown_face_encoding) > 1):
+            status = 0
+            image = ""
+        else:
+            status = 1
+            image = filename
     else:
         status = 0
         image = ""
@@ -166,21 +171,25 @@ def presentId(id):
     sample_picture_encoding = face_recognition.face_encodings(sample_picture)[0]
     
     unknown_picture = face_recognition.load_image_file("./static/upload/" + filename)
-    unknown_face_encoding = face_recognition.face_encodings(unknown_picture)[0]
+    unknown_face_encoding = face_recognition.face_encodings(unknown_picture)
 
-    results = face_recognition.compare_faces([sample_picture_encoding], unknown_face_encoding, 0.4)
-    distance = face_recognition.face_distance([sample_picture_encoding], unknown_face_encoding)
+    results = face_recognition.compare_faces([sample_picture_encoding], unknown_face_encoding[0], 0.4)
+    distance = face_recognition.face_distance([sample_picture_encoding], unknown_face_encoding[0])
     
     print(results)
     print(distance)
-
-    if True in results:
-        will_distanced = 1 - distance[0]
-        distanced = int(will_distanced * 100)
-        profile = data
-    else: 
+    
+    if(len(unknown_face_encoding) > 1):
         distanced = 0
         profile = ""
+    else:
+        if True in results:
+            will_distanced = 1 - distance[0]
+            distanced = int(will_distanced * 100)
+            profile = data
+        else: 
+            distanced = 0
+            profile = ""
 
     return jsonify({
         "Distance"  : distanced,
